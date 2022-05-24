@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('leaflet/leaflet.css') }}">
+    <link rel="stylesheet" href="{{ asset('leaflet/leaflet-custom.css') }}">
+{% endblock %}
+
+{% block javascripts %}
+    <script defer src="{{ asset('leaflet/leaflet.js') }}"></script>
+    <script defer src="{{ asset('leaflet/leaflet-custom.js') }}"></script>
+    <script defer src="{{ asset('geolocalization/form-dynamic.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+    {# Formulaire avec select dynamique #}
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+    {{ form_end(form) }}
+
+    {# La carte et le boutton qui permet de la telecharger #}
+    <div class="mt-3 d-flex justify-content-center">
+        <div id="map"></div>
+    </div>
+    <span class="hidden" id="lat">{{ lat }}</span>
+    <span class="hidden" id="long">{{ long }}</span>
+    <button class="btn btn-primary m-1" id="printMap">telecharger la carte</button>
+    
+    {# Boutton qui convertie le html en pdf #}
+    <a class="btn btn-primary m-1" href="{{ path('toPdf', {
+        'lat': lat|replace({'.':'a'}), 
+        'long': long|replace({'.':'a'}),
+        'city': city|lower|url_encode
+    }) }}">Obtenir les coordonnées</a>
+    {# Envoyer les infos par Email #}
+    {{ form_start(mailForm) }}
+        {{ form_row(mailForm.city, { 'attr': {'value': city} }) }}
+        {{ form_row(mailForm.lat, { 'attr': {'value': lat} }) }}
+        {{ form_row(mailForm.long, { 'attr': {'value': long} }) }}
+        {{ form_widget(mailForm) }}
+    {{ form_end(mailForm) }}
+
+{% endblock %}
